@@ -1,9 +1,11 @@
 require 'yaml'
 
 class ConfigReader
+  attr_reader :projectname, :errors
   
   def initialize(projectname)
     @projectname = projectname
+    @errors = []
   end
 
   def project_description
@@ -24,11 +26,26 @@ class ConfigReader
   def imap_config(mailboxname)
   end
 
-  private
+  # private
 
   def validate_config_file
+    file_exists?
+    require 'pry'; binding.pry
+  rescue RuntimeError => error
+    errors << error.message
+    require 'pry'; binding.pry
   end
 
   def validate_secret_file
+  end
+
+  private
+
+  def file_exists?
+    filename = 'config/' + projectname + '.yml'
+
+    unless File.exists?(filename)
+      raise 'Config-File ' + filename + ' does not exist'
+    end
   end
 end
